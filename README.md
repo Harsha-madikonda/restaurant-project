@@ -4,11 +4,11 @@
 
 ## 🚀 Overview
 
-**ForkLine** is a production-ready restaurant management system developed entirely through **AI prompt engineering** using Claude AI.
+**ForkLine** is a full-stack restaurant management system built using **AI prompt engineering** with Claude AI.
 
-It demonstrates how complex, real-world applications can be built by describing requirements in natural language — without manual coding.
+It demonstrates how real-world applications can be developed by describing requirements in natural language — without manual coding.
 
-🚧 This project is currently not deployed. Run locally to explore features.
+> 🚧 This project is currently not deployed. Run locally to explore features.
 
 ---
 
@@ -115,7 +115,7 @@ npm install
 
 ### Environment Setup
 
-Create `.env` file:
+Create a `.env` file:
 
 ```env
 PORT=3000
@@ -124,20 +124,20 @@ SESSION_SECRET=your-secret-key
 NODE_ENV=development
 ```
 
-### Run the App
+### Run the Application
 
 ```bash
 npm run dev
 ```
 
-Open:
+Open in browser:
 👉 http://localhost:3000
 
 ---
 
 ## 💡 AI Development Approach
 
-This project was created entirely through structured prompts such as:
+This project was built entirely through structured prompts such as:
 
 * Generate full-stack restaurant system
 * Add authentication and role-based access
@@ -145,24 +145,24 @@ This project was created entirely through structured prompts such as:
 * Implement cart and order system
 * Add deployment instructions
 
-This showcases the power of **prompt-driven software development**.
+This highlights the potential of **prompt-driven software development**.
 
 ---
 
 ## 🌱 Future Improvements
 
-* Payment integration (Stripe/Razorpay)
+* Payment integration (Stripe / Razorpay)
 * Email notifications
-* Reviews & ratings
+* Reviews & ratings system
 * Advanced analytics
-* PWA/mobile support
+* PWA / mobile app support
 * Multi-language support
 
 ---
 
 ## 🐛 Troubleshooting
 
-| Issue                  | Fix                   |
+| Issue                  | Solution              |
 | ---------------------- | --------------------- |
 | MongoDB not connecting | Start MongoDB service |
 | Port already in use    | Change PORT in `.env` |
@@ -175,16 +175,16 @@ This showcases the power of **prompt-driven software development**.
 
 **M. Harshavardhan Rao**
 
+* GitHub: https://github.com/Harsha-madikonda
+
 ---
 
 ## 📜 License
 
-MIT License — free to use and modify.
+This project is licensed under the **MIT License**.
 
 ---
 
 ## ⭐ Support
 
 If you found this project useful, consider giving it a ⭐ on GitHub!
-
----
