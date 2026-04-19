@@ -1,0 +1,69 @@
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <span class="logo-icon"><i class="fas fa-utensils"></i></span>
+    <span class="logo-text">ForkLine</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-section-label">Main</div>
+    <a href="/dashboard" class="nav-item <%= locals.title && title.toLowerCase().includes('dashboard') ? 'active' : '' %>">
+      <i class="fas fa-th-large"></i><span>Dashboard</span>
+    </a>
+
+    <% if (locals.currentUser && currentUser.role === 'admin') { %>
+      <div class="nav-section-label">Management</div>
+      <a href="/food" class="nav-item <%= locals.title && title.toLowerCase().includes('food') ? 'active' : '' %>">
+        <i class="fas fa-burger"></i><span>Food Menu</span>
+      </a>
+      <a href="/food/add" class="nav-item">
+        <i class="fas fa-plus-circle"></i><span>Add Food Item</span>
+      </a>
+      <a href="/orders" class="nav-item <%= locals.title && title.toLowerCase().includes('order') ? 'active' : '' %>">
+        <i class="fas fa-receipt"></i><span>All Orders</span>
+      </a>
+      <a href="/users" class="nav-item <%= locals.title && title.toLowerCase().includes('user') ? 'active' : '' %>">
+        <i class="fas fa-users"></i><span>Users</span>
+      </a>
+    <% } else if (locals.currentUser && currentUser.role === 'customer') { %>
+      <div class="nav-section-label">Order</div>
+      <a href="/food" class="nav-item <%= locals.title && title.toLowerCase().includes('food') ? 'active' : '' %>">
+        <i class="fas fa-burger"></i><span>Browse Menu</span>
+      </a>
+      <a href="/orders/cart" class="nav-item">
+        <i class="fas fa-cart-shopping"></i><span>Place Order</span>
+      </a>
+      <a href="/orders" class="nav-item <%= locals.title && title.toLowerCase().includes('order') ? 'active' : '' %>">
+        <i class="fas fa-clock-rotate-left"></i><span>My Orders</span>
+      </a>
+    <% } %>
+
+    <div class="nav-section-label">Account</div>
+    <a href="/profile" class="nav-item <%= locals.title && title.toLowerCase().includes('profile') ? 'active' : '' %>">
+      <i class="fas fa-user-circle"></i><span>Profile</span>
+    </a>
+    <form action="/auth/logout" method="POST" style="margin:0">
+      <button type="submit" class="nav-item nav-logout">
+        <i class="fas fa-right-from-bracket"></i><span>Logout</span>
+      </button>
+    </form>
+  </nav>
+
+  <div class="sidebar-footer">
+    <% if (locals.currentUser) { %>
+      <div class="sidebar-user">
+        <div class="sidebar-user-avatar">
+          <% if (currentUser.avatar) { %>
+            <img src="<%= currentUser.avatar %>" alt="avatar" />
+          <% } else { %>
+            <%= currentUser.name.charAt(0).toUpperCase() %>
+          <% } %>
+        </div>
+        <div class="sidebar-user-info">
+          <span class="sidebar-user-name"><%= currentUser.name %></span>
+          <span class="sidebar-user-role <%= currentUser.role %>"><%= currentUser.role %></span>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>

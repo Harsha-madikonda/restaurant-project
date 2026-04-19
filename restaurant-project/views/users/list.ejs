@@ -1,0 +1,57 @@
+<%- include('../partials/header') %>
+
+<div class="table-wrapper section-card">
+  <% if (users.length === 0) { %>
+    <div class="empty-state"><i class="fas fa-users"></i><p>No users found.</p></div>
+  <% } else { %>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Role</th>
+          <th>Orders</th>
+          <th>Joined</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% users.forEach(user => { %>
+          <tr>
+            <td>
+              <div class="td-user">
+                <div class="td-avatar"><%= user.name.charAt(0).toUpperCase() %></div>
+                <div>
+                  <div class="td-name"><%= user.name %> <% if (user._id.toString() === locals.currentUser._id.toString()) { %><span class="badge-you">You</span><% } %></div>
+                  <div class="td-email"><%= user.email %></div>
+                </div>
+              </div>
+            </td>
+            <td><span class="badge badge-<%= user.role %>"><%= user.role %></span></td>
+            <td><%= user.orderCount %></td>
+            <td><%= new Date(user.createdAt).toLocaleDateString('en-IN') %></td>
+            <td>
+              <div class="action-btns">
+                <% if (user._id.toString() !== locals.currentUser._id.toString()) { %>
+                  <form action="/users/<%= user._id %>/role?_method=PUT" method="POST" style="display:inline">
+                    <input type="hidden" name="role" value="<%= user.role === 'admin' ? 'customer' : 'admin' %>" />
+                    <button type="submit" class="btn btn-outline btn-sm" title="Toggle role">
+                      <i class="fas fa-user-gear"></i>
+                      Make <%= user.role === 'admin' ? 'Customer' : 'Admin' %>
+                    </button>
+                  </form>
+                  <form action="/users/<%= user._id %>?_method=DELETE" method="POST" style="display:inline" onsubmit="return confirm('Delete user and all their orders?')">
+                    <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                  </form>
+                <% } else { %>
+                  <span class="text-muted">—</span>
+                <% } %>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  <% } %>
+</div>
+
+<%- include('../partials/footer') %>

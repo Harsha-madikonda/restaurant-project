@@ -1,0 +1,89 @@
+<%- include('../partials/header') %>
+
+<div class="section-header-bar">
+  <div></div>
+  <% if (locals.currentUser && currentUser.role === 'customer') { %>
+    <a href="/orders/cart" class="btn btn-primary"><i class="fas fa-plus"></i> New Order</a>
+  <% } %>
+</div>
+
+<% if (orders.length === 0) { %>
+  <div class="empty-state">
+    <i class="fas fa-receipt"></i>
+    <p>No orders found.</p>
+    <% if (locals.currentUser && currentUser.role === 'customer') { %>
+      <a href="/orders/cart" class="btn btn-primary" style="margin-top:1rem">Place Your First Order</a>
+    <% } %>
+  </div>
+<% } else { %>
+  <div class="table-wrapper section-card">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <% if (locals.currentUser && currentUser.role === 'admin') { %><th>Customer</th><% } %>
+          <th>Items</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% orders.forEach(order => { %>
+          <tr>
+            <td class="td-mono">#<%= order._id.toString().slice(-6).toUpperCase() %></td>
+            <% if (locals.currentUser && currentUser.role === 'admin') { %>
+              <td>
+                <div class="td-user">
+                  <div class="td-avatar"><%= order.customer ? order.customer.name.charAt(0).toUpperCase() : '?' %></div>
+                  <div>
+                    <div class="td-name"><%= order.customer ? order.customer.name : 'Deleted User' %></div>
+                    <div class="td-email"><%= order.customer ? order.customer.email : '' %></div>
+                  </div>
+                </div>
+              </td>
+            <% } %>
+            <td>
+              <div class="order-items-preview">
+                <% order.items.slice(0,2).forEach(item => { %>
+                  <span class="item-chip"><%= item.name %> x<%= item.quantity %></span>
+                <% }) %>
+                <% if (order.items.length > 2) { %><span class="item-more">+<%= order.items.length - 2 %> more</span><% } %>
+              </div>
+            </td>
+            <td class="td-price">₹<%= order.totalPrice.toFixed(2) %></td>
+            <td><span class="badge badge-<%= order.status.toLowerCase() %>"><%= order.status %></span></td>
+            <td><%= new Date(order.createdAt).toLocaleDateString('en-IN') %></td>
+            <td>
+              <div class="action-btns">
+                <a href="/orders/<%= order._id %>" class="btn btn-ghost btn-sm"><i class="fas fa-eye"></i></a>
+                <% if (locals.currentUser && currentUser.role === 'admin') { %>
+                  <div class="dropdown">
+                    <button class="btn btn-ghost btn-sm dropdown-toggle"><i class="fas fa-ellipsis-v"></i></button>
+                    <div class="dropdown-menu">
+                      <% ['Pending','Preparing','Completed','Cancelled'].forEach(s => { %>
+                        <form action="/orders/<%= order._id %>/status?_method=PUT" method="POST">
+                          <input type="hidden" name="status" value="<%= s %>" />
+                          <button type="submit" class="dropdown-item <%= order.status === s ? 'active' : '' %>">
+                            Set <%= s %>
+                          </button>
+                        </form>
+                      <% }) %>
+                      <div class="dropdown-divider"></div>
+                      <form action="/orders/<%= order._id %>?_method=DELETE" method="POST" onsubmit="return confirm('Delete this order?')">
+                        <button type="submit" class="dropdown-item danger">Delete</button>
+                      </form>
+                    </div>
+                  </div>
+                <% } %>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+<% } %>
+
+<%- include('../partials/footer') %>

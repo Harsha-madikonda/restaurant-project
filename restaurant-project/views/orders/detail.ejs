@@ -1,0 +1,81 @@
+<%- include('../partials/header') %>
+
+<div class="form-page">
+  <div class="form-card">
+    <div class="form-card-header">
+      <h2><i class="fas fa-receipt"></i> Order #<%= order._id.toString().slice(-6).toUpperCase() %></h2>
+      <a href="/orders" class="btn btn-outline btn-sm"><i class="fas fa-arrow-left"></i> Back</a>
+    </div>
+
+    <div class="order-detail-grid">
+      <div class="order-meta">
+        <div class="meta-item">
+          <span class="meta-label">Status</span>
+          <span class="badge badge-<%= order.status.toLowerCase() %>"><%= order.status %></span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Order Date</span>
+          <span><%= new Date(order.createdAt).toLocaleString('en-IN') %></span>
+        </div>
+        <% if (order.customer) { %>
+          <div class="meta-item">
+            <span class="meta-label">Customer</span>
+            <span><%= order.customer.name %></span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-label">Email</span>
+            <span><%= order.customer.email %></span>
+          </div>
+        <% } %>
+      </div>
+
+      <% if (locals.currentUser && currentUser.role === 'admin') { %>
+        <div class="order-status-form">
+          <h4>Update Status</h4>
+          <form action="/orders/<%= order._id %>/status?_method=PUT" method="POST" class="status-form">
+            <select name="status" class="form-select">
+              <% ['Pending','Preparing','Completed','Cancelled'].forEach(s => { %>
+                <option value="<%= s %>" <%= order.status === s ? 'selected' : '' %>><%= s %></option>
+              <% }) %>
+            </select>
+            <button type="submit" class="btn btn-primary">Update</button>
+          </form>
+        </div>
+      <% } %>
+    </div>
+
+    <h3 style="margin: 1.5rem 0 1rem">Ordered Items</h3>
+    <div class="table-wrapper">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Subtotal</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% order.items.forEach(item => { %>
+            <tr>
+              <td><strong><%= item.name %></strong></td>
+              <td>₹<%= item.price.toFixed(2) %></td>
+              <td><%= item.quantity %></td>
+              <td class="td-price">₹<%= (item.price * item.quantity).toFixed(2) %></td>
+            </tr>
+          <% }) %>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" style="text-align:right; font-weight:600; padding: 1rem">Grand Total</td>
+            <td class="td-price" style="font-size:1.1rem; font-weight:700; color: var(--primary)">
+              ₹<%= order.totalPrice.toFixed(2) %>
+            </td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<%- include('../partials/footer') %>

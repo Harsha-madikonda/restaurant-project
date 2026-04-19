@@ -1,0 +1,29 @@
+<header class="topbar">
+  <div class="topbar-left">
+    <button class="sidebar-toggle" onclick="toggleSidebar()">
+      <i class="fas fa-bars"></i>
+    </button>
+    <h1 class="page-title"><%= title %></h1>
+  </div>
+  <div class="topbar-right">
+    <% if (locals.currentUser && currentUser.role === 'customer') { %>
+      <a href="/orders/cart" class="topbar-btn">
+        <i class="fas fa-cart-shopping"></i>
+        <span>Order</span>
+      </a>
+    <% } %>
+    <div class="topbar-user">
+      <div class="topbar-avatar">
+        <% if (locals.currentUser && currentUser.avatar) { %>
+          <img src="<%= currentUser.avatar %>" alt="avatar" />
+        <% } else if (locals.currentUser) { %>
+          <%= currentUser.name.charAt(0).toUpperCase() %>
+        <% } %>
+      </div>
+      <div class="topbar-user-info">
+        <span class="topbar-user-name"><%= locals.currentUser ? currentUser.name : '' %></span>
+        <span class="topbar-user-role"><%= locals.currentUser ? currentUser.role : '' %></span>
+      </div>
+    </div>
+  </div>
+</header>

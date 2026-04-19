@@ -1,0 +1,145 @@
+<%- include('../partials/header') %>
+
+<div class="cart-layout">
+  <div class="menu-panel">
+    <h3 class="panel-title"><i class="fas fa-burger"></i> Select Items</h3>
+    <div class="menu-search">
+      <input type="text" id="menuSearch" placeholder="Search menu..." oninput="filterMenu()" class="form-input" />
+    </div>
+    <div class="menu-list" id="menuList">
+      <% if (foods.length === 0) { %>
+        <div class="empty-state"><i class="fas fa-burger"></i><p>No items available.</p></div>
+      <% } else { %>
+        <% foods.forEach(food => { %>
+          <div class="menu-item" data-name="<%= food.name.toLowerCase() %>">
+            <div class="menu-item-img">
+              <% if (food.image) { %>
+                <img src="<%= food.image %>" alt="<%= food.name %>" />
+              <% } else { %>
+                <div class="menu-item-placeholder"><i class="fas fa-burger"></i></div>
+              <% } %>
+            </div>
+            <div class="menu-item-info">
+              <div class="menu-item-name"><%= food.name %></div>
+              <div class="menu-item-desc"><%= food.description.substring(0,60) %>...</div>
+              <span class="food-badge food-badge-<%= food.category === 'Veg' ? 'veg' : 'nonveg' %> badge-sm"><%= food.category %></span>
+            </div>
+            <div class="menu-item-right">
+              <div class="menu-item-price">₹<%= food.price.toFixed(2) %></div>
+              <button class="btn btn-primary btn-sm" onclick="addToCart('<%= food._id %>','<%= food.name %>',<%= food.price %>)">
+                <i class="fas fa-plus"></i> Add
+              </button>
+            </div>
+          </div>
+        <% }) %>
+      <% } %>
+    </div>
+  </div>
+
+  <div class="cart-panel">
+    <h3 class="panel-title"><i class="fas fa-cart-shopping"></i> Your Cart</h3>
+    <div id="cartItems" class="cart-items">
+      <div class="cart-empty" id="cartEmpty">
+        <i class="fas fa-cart-shopping"></i>
+        <p>Your cart is empty</p>
+        <small>Add items from the menu</small>
+      </div>
+    </div>
+    <div class="cart-summary" id="cartSummary" style="display:none">
+      <div class="cart-total">
+        <span>Total</span>
+        <span class="cart-total-amount" id="cartTotal">₹0.00</span>
+      </div>
+      <form action="/orders" method="POST" id="orderForm">
+        <div id="orderInputs"></div>
+        <button type="submit" class="btn btn-primary btn-full" id="placeOrderBtn">
+          <i class="fas fa-check-circle"></i> Place Order
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  let cart = {};
+
+  function addToCart(id, name, price) {
+    if (cart[id]) {
+      cart[id].qty += 1;
+    } else {
+      cart[id] = { name, price, qty: 1 };
+    }
+    renderCart();
+  }
+
+  function removeFromCart(id) {
+    delete cart[id];
+    renderCart();
+  }
+
+  function updateQty(id, delta) {
+    if (!cart[id]) return;
+    cart[id].qty += delta;
+    if (cart[id].qty <= 0) delete cart[id];
+    renderCart();
+  }
+
+  function renderCart() {
+    const container = document.getElementById('cartItems');
+    const empty = document.getElementById('cartEmpty');
+    const summary = document.getElementById('cartSummary');
+    const orderInputs = document.getElementById('orderInputs');
+
+    const keys = Object.keys(cart);
+
+    if (keys.length === 0) {
+      container.innerHTML = '';
+      container.appendChild(empty);
+      empty.style.display = 'flex';
+      summary.style.display = 'none';
+      return;
+    }
+
+    empty.style.display = 'none';
+    summary.style.display = 'block';
+
+    let html = '';
+    let total = 0;
+    let inputs = '';
+
+    keys.forEach((id, idx) => {
+      const item = cart[id];
+      const subtotal = item.price * item.qty;
+      total += subtotal;
+      html += `
+        <div class="cart-item">
+          <div class="cart-item-info">
+            <div class="cart-item-name">${item.name}</div>
+            <div class="cart-item-price">₹${item.price.toFixed(2)} each</div>
+          </div>
+          <div class="cart-item-controls">
+            <button class="qty-btn" onclick="updateQty('${id}', -1)">−</button>
+            <span class="qty-val">${item.qty}</span>
+            <button class="qty-btn" onclick="updateQty('${id}', 1)">+</button>
+          </div>
+          <div class="cart-item-subtotal">₹${subtotal.toFixed(2)}</div>
+          <button class="cart-remove" onclick="removeFromCart('${id}')"><i class="fas fa-times"></i></button>
+        </div>`;
+      inputs += `<input type="hidden" name="items[${idx}][foodId]" value="${id}" />`;
+      inputs += `<input type="hidden" name="items[${idx}][quantity]" value="${item.qty}" />`;
+    });
+
+    container.innerHTML = html;
+    document.getElementById('cartTotal').textContent = '₹' + total.toFixed(2);
+    orderInputs.innerHTML = inputs;
+  }
+
+  function filterMenu() {
+    const q = document.getElementById('menuSearch').value.toLowerCase();
+    document.querySelectorAll('.menu-item').forEach(item => {
+      item.style.display = item.dataset.name.includes(q) ? '' : 'none';
+    });
+  }
+</script>
+
+<%- include('../partials/footer') %>

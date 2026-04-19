@@ -1,0 +1,68 @@
+<%- include('../partials/header') %>
+
+<div class="section-header-bar">
+  <div class="filter-bar">
+    <form action="/food" method="GET" class="filter-form">
+      <input type="text" name="search" placeholder="Search items..." value="<%= search || '' %>" class="form-input" />
+      <select name="category" class="form-select">
+        <option value="">All Categories</option>
+        <option value="Veg" <%= category === 'Veg' ? 'selected' : '' %>>🟢 Veg</option>
+        <option value="Non-Veg" <%= category === 'Non-Veg' ? 'selected' : '' %>>🔴 Non-Veg</option>
+      </select>
+      <button type="submit" class="btn btn-primary">Filter</button>
+      <a href="/food" class="btn btn-outline">Clear</a>
+    </form>
+  </div>
+  <% if (locals.currentUser && currentUser.role === 'admin') { %>
+    <a href="/food/add" class="btn btn-primary"><i class="fas fa-plus"></i> Add Item</a>
+  <% } %>
+</div>
+
+<% if (foods.length === 0) { %>
+  <div class="empty-state">
+    <i class="fas fa-burger"></i>
+    <p>No food items found.</p>
+    <% if (locals.currentUser && currentUser.role === 'admin') { %>
+      <a href="/food/add" class="btn btn-primary" style="margin-top:1rem">Add Your First Item</a>
+    <% } %>
+  </div>
+<% } else { %>
+  <div class="food-grid">
+    <% foods.forEach(food => { %>
+      <div class="food-card">
+        <div class="food-card-img">
+          <% if (food.image) { %>
+            <img src="<%= food.image %>" alt="<%= food.name %>" />
+          <% } else { %>
+            <div class="food-card-placeholder"><i class="fas fa-burger"></i></div>
+          <% } %>
+          <span class="food-badge food-badge-<%= food.category === 'Veg' ? 'veg' : 'nonveg' %>">
+            <%= food.category %>
+          </span>
+          <% if (!food.available) { %>
+            <span class="food-unavailable">Unavailable</span>
+          <% } %>
+        </div>
+        <div class="food-card-body">
+          <h4><%= food.name %></h4>
+          <p><%= food.description.substring(0, 80) %><%= food.description.length > 80 ? '...' : '' %></p>
+          <div class="food-card-footer">
+            <span class="food-price">₹<%= food.price.toFixed(2) %></span>
+            <div class="food-actions">
+              <% if (locals.currentUser && currentUser.role === 'admin') { %>
+                <a href="/food/edit/<%= food._id %>" class="btn btn-ghost btn-sm"><i class="fas fa-edit"></i></a>
+                <form action="/food/<%= food._id %>?_method=DELETE" method="POST" style="display:inline" onsubmit="return confirm('Delete this item?')">
+                  <button type="submit" class="btn btn-danger btn-sm"><i class="fas fa-trash"></i></button>
+                </form>
+              <% } else { %>
+                <a href="/orders/cart" class="btn btn-primary btn-sm">Order</a>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+<% } %>
+
+<%- include('../partials/footer') %>
